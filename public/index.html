@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website-Analyse-Tool | Saraci Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            /* Saraci Design Farbpalette - Dark Mode */
+            --primary-color: #e81818; /* Rot */
+            --secondary-color: #ff3333; /* Helleres Rot */
+            --accent-color: #666666; /* Grau */
+            --dark-color: #000000; /* Schwarz */
+            --light-color: #1a1a1a; /* Dunkelgrau */
+            --text-color: #ffffff; /* Weiß */
+            --background-color: #000000; /* Schwarz */
+            --card-color: #0d0d0d; /* Fast Schwarz */
+            --success-color: #00d26a;
+            --warning-color: #ffbb00;
+            --danger-color: #ff3333;
+            --border-radius: 0; /* Eckige Ecken im Saraci-Design */
+            --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            --font-family: 'Raleway', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background-color: var(--dark-color);
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            max-height: 60px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-text {
+            margin-left: 15px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .logo-text p {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        nav {
+            background-color: var(--dark-color);
+            border-bottom: 1px solid #222;
+            padding: 0;
+        }
+
+        .nav-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-link {
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            padding: 60px 0;
+            min-height: calc(100vh - 250px);
+        }
+
+        .card {
+            background-color: var(--card-color);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+
+        .card-header {
+            padding: 25px;
+            border-bottom: 1px solid #222;
+            background-color: var(--card-color);
+            position: relative;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary-color);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #333;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #ff3333; /* Helleres Rot */
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #888888; /* Helleres Grau */
+        }
+
+        .info-text {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .result-card {
+            display: none;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(232, 24, 24, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader p {
+            margin-top: 20px;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            border-left: 4px solid transparent;
+        }
+
+        .alert-success {
+            background-color: rgba(0, 210, 106, 0.05);
+            border-left-color: var(--success-color);
+            color: #d2ffd0;
+        }
+
+        .alert-error {
+            background-color: rgba(255, 51, 51, 0.05);
+            border-left-color: var(--danger-color);
+            color: #ffdbdb;
+        }
+
+        .alert-info {
+            background-color: rgba(0, 153, 255, 0.05);
+            border-left-color: #0099ff;
+            color: #d9efff;
+        }
+
+        .result-section {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #222;
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .result-section h3 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .score-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .score-item {
+            flex: 1;
+            min-width: 180px;
+            background-color: #111;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-item h4 {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #bbb;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .good {
+            color: var(--success-color);
+        }
+
+        .average {
+            color: var(--warning-color);
+        }
+
+        .poor {
+            color: var(--danger-color);
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: var(--text-color);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-logo {
+            max-height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .footer-nav {
+            margin: 20px 0;
+        }
+
+        .footer-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-social {
+            margin: 20px 0;
+        }
+
+        .footer-social a {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        ul li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-container {
+                margin-bottom: 15px;
+            }
+
+            .nav-container {
+                justify-content: center;
+            }
+
+            .score-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container header-container">
+        <div class="logo-container">
+            <!-- Platzhalter für dein Logo - ersetze src mit dem Pfad zu deinem Logo -->
+            <img src="logo.png" alt="Saraci Design Logo" class="logo">
+            <div class="logo-text">
+                <h1>SARACI DESIGN</h1>
+                <p>WEBSITE ANALYSE TOOL</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container">
+        <div class="nav-container">
+            <a href="/" class="nav-link active">ANALYSE-TOOL</a>
+            <a href="/dashboard" class="nav-link">DASHBOARD</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>WEBSITE ANALYSIEREN</h2>
+            </div>
+            <div class="card-body">
+                <form id="analyzeForm">
+                    <div class="form-group">
+                        <label for="url">WEBSITE-URL</label>
+                        <input type="text" id="url" name="url" placeholder="https://beispiel.de" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-MAIL (FÜR DEN BERICHT)</label>
+                        <input type="email" id="email" name="email" placeholder="deine@email.de">
+                        <small class="info-text">Optional. Wenn angegeben, wird der Bericht an diese E-Mail gesendet.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-block" id="analyzeBtn">WEBSITE ANALYSIEREN</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>ANALYSE LÄUFT... DIES KANN EINIGE MINUTEN DAUERN.</p>
+        </div>
+
+        <div class="result-card card" id="resultCard">
+            <div class="card-header">
+                <h2>ANALYSEERGEBNISSE</h2>
+            </div>
+            <div class="card-body">
+                <div id="alertContainer"></div>
+
+                <div class="result-section">
+                    <h3>GESAMTBEWERTUNG</h3>
+                    <div class="score-container" id="scoreContainer">
+                        <!-- Scores werden hier per JavaScript eingefügt -->
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>WICHTIGSTE ERKENNTNISSE</h3>
+                    <ul id="insightsList">
+                        <!-- Erkenntnisse werden hier per JavaScript eingefügt -->
+                    </ul>
+                </div>
+
+                <p class="info-text">Ein detaillierter Bericht wurde erstellt und kann heruntergeladen werden.</p>
+                <button class="btn" id="downloadBtn" style="display: none;">BERICHT HERUNTERLADEN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container footer-content">
+        <!-- Platzhalter für dein Logo - ersetze src mit dem Pfad zu deinem Logo -->
+        <img src="logo.png" alt="Saraci Design Logo" class="footer-logo">
+
+        <div class="footer-nav">
+            <a href="/">HOME</a>
+            <a href="/dashboard">DASHBOARD</a>
+            <a href="https://saraci-design.de">SARACI DESIGN</a>
+        </div>
+
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+
+        <div class="copyright">
+            &copy; 2025 SARACI DESIGN. ALLE RECHTE VORBEHALTEN.
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const analyzeForm = document.getElementById('analyzeForm');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loader = document.getElementById('loader');
+        const resultCard = document.getElementById('resultCard');
+        const scoreContainer = document.getElementById('scoreContainer');
+        const insightsList = document.getElementById('insightsList');
+        const alertContainer = document.getElementById('alertContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        analyzeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // UI zurücksetzen
+            resultCard.style.display = 'none';
+            alertContainer.innerHTML = '';
+            scoreContainer.innerHTML = '';
+            insightsList.innerHTML = '';
+
+            // Daten sammeln
+            const url = document.getElementById('url').value;
+            const email = document.getElementById('email').value;
+
+            // URL-Validierung
+            if (!isValidURL(url)) {
+                showAlert('Bitte gib eine gültige URL ein (z.B. https://beispiel.de)', 'error');
+                return;
+            }
+
+            // UI-Status aktualisieren
+            analyzeBtn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                // API-Anfrage senden
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, email })
+                });
+
+                const data = await response.json();
+
+                // Fehlerbehandlung
+                if (!data.success) {
+                    throw new Error(data.error || 'Ein Fehler ist bei der Analyse aufgetreten');
+                }
+
+                // Ergebnisse anzeigen
+                displayResults(data.report);
+
+                // Download-Button konfigurieren, wenn ein Bericht erstellt wurde
+                if (data.reportPath) {
+                    downloadBtn.style.display = 'inline-block';
+                    downloadBtn.onclick = function() {
+                        window.location.href = `/download?path=${encodeURIComponent(data.reportPath)}`;
+                    };
+                }
+
+                // Erfolg anzeigen
+                showAlert('Analyse erfolgreich abgeschlossen!', 'success');
+
+                // E-Mail-Hinweis
+                if (email) {
+                    showAlert(`Der Bericht wurde an ${email} gesendet.`, 'info');
+                }
+
+            } catch (error) {
+                console.error('Fehler:', error);
+                showAlert(error.message || 'Ein Fehler ist aufgetreten', 'error');
+            } finally {
+                // UI zurücksetzen
+                analyzeBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        });
+
+        // Ergebnisse anzeigen
+        function displayResults(report) {
+            resultCard.style.display = 'block';
+
+            // Scores anzeigen
+            displayScores(report);
+
+            // Erkenntnisse anzeigen
+            displayInsights(report);
+        }
+
+        // Scores anzeigen
+        function displayScores(report) {
+            const scores = [
+                { name: 'SEO', value: calculateSeoScore(report.seo) },
+                { name: 'PERFORMANCE', value: report.performance?.score || 'N/A' },
+                { name: 'SICHERHEIT', value: report.security?.securityHeaders?.score || 'N/A' }
+            ];
+
+            scores.forEach(score => {
+                const scoreItem = document.createElement('div');
+                scoreItem.className = 'score-item';
+
+                const scoreClass = getScoreClass(score.value);
+
+                scoreItem.innerHTML = `
+                    <h4>${score.name}</h4>
+                    <div class="score-value ${scoreClass}">${score.value}</div>
+                `;
+
+                scoreContainer.appendChild(scoreItem);
+            });
+        }
+
+        // Erkenntnisse anzeigen
+        function displayInsights(report) {
+            const insights = generateInsights(report);
+
+            insights.forEach(insight => {
+                const li = document.createElement('li');
+                li.textContent = insight;
+                insightsList.appendChild(li);
+            });
+        }
+
+        // Alert anzeigen
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+
+            // Scroll zum Alert
+            alert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // URL-Validierung
+        function isValidURL(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // CSS-Klasse für Score-Farbe bekommen
+        function getScoreClass(score) {
+            if (score === 'N/A' || typeof score !== 'number') return '';
+            if (score >= 70) return 'good';
+            if (score >= 50) return 'average';
+            return 'poor';
+        }
+
+        // SEO-Score berechnen
+        function calculateSeoScore(seo) {
+            if (!seo || seo.error) return 'N/A';
+
+            let score = 0;
+            const total = 5;
+
+            // Titel
+            if (seo.meta.title && seo.meta.titleLength >= 30 && seo.meta.titleLength <= 60) {
+                score++;
+            }
+
+            // Beschreibung
+            if (seo.meta.description && seo.meta.descriptionLength >= 50 && seo.meta.descriptionLength <= 160) {
+                score++;
+            }
+
+            // H1
+            if (seo.headings.h1 === 1) {
+                score++;
+            }
+
+            // Alt-Attribute
+            if (seo.images.altPercentage >= 80) {
+                score++;
+            }
+
+            // Link-Struktur
+            if (seo.links.internal > 0 && seo.links.external > 0) {
+                score++;
+            }
+
+            return Math.round((score / total) * 100);
+        }
+
+        // Hilfsfunktion: Erkenntnisse generieren
+        function generateInsights(report) {
+            const insights = [];
+
+            // SEO-Erkenntnisse
+            if (report.seo && !report.seo.error) {
+                if (!report.seo.meta.title || report.seo.meta.titleLength < 10) {
+                    insights.push('Der Seitentitel fehlt oder ist zu kurz für SEO.');
+                }
+                if (!report.seo.meta.description || report.seo.meta.descriptionLength < 50) {
+                    insights.push('Die Meta-Beschreibung fehlt oder ist zu kurz für SEO.');
+                }
+                if (report.seo.headings.h1 !== 1) {
+                    insights.push(`Die Seite hat ${report.seo.headings.h1} H1-Elemente (optimal: genau 1).`);
+                }
+                if (report.seo.images.withoutAlt > 0) {
+                    insights.push(`${report.seo.images.withoutAlt} Bilder haben keine Alt-Attribute.`);
+                }
+            }
+
+            // Performance-Erkenntnisse
+            if (report.performance && !report.performance.error) {
+                if (report.performance.score < 50) {
+                    insights.push('Die Website hat erhebliche Performance-Probleme.');
+                } else if (report.performance.score < 80) {
+                    insights.push('Die Website-Performance könnte verbessert werden.');
+                }
+            }
+
+            // Sicherheits-Erkenntnisse
+            if (report.security && !report.security.error) {
+                if (!report.security.https.enabled) {
+                    insights.push('Die Website verwendet kein HTTPS, was ein Sicherheitsrisiko darstellt.');
+                }
+                if (report.security.securityHeaders.score < 50) {
+                    insights.push('Wichtige Sicherheits-Header fehlen auf der Website.');
+                }
+            }
+
+            // Wenn keine Erkenntnisse, positives Feedback geben
+            if (insights.length === 0) {
+                insights.push('Keine kritischen Probleme gefunden. Die Website ist gut optimiert.');
+            }
+
+            return insights;
+        }
+    });
+</script>
+</body>
+</html>

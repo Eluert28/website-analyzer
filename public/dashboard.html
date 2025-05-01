@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse Dashboard | Saraci Design</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            /* Saraci Design Farbpalette - Dark Mode */
+            --primary-color: #e81818; /* Rot */
+            --secondary-color: #ff3333; /* Helleres Rot */
+            --accent-color: #666666; /* Grau */
+            --dark-color: #000000; /* Schwarz */
+            --light-color: #1a1a1a; /* Dunkelgrau */
+            --text-color: #ffffff; /* Weiß */
+            --background-color: #000000; /* Schwarz */
+            --card-color: #0d0d0d; /* Fast Schwarz */
+            --success-color: #00d26a;
+            --warning-color: #ffbb00;
+            --danger-color: #ff3333;
+            --border-radius: 0; /* Eckige Ecken im Saraci-Design */
+            --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            --font-family: 'Raleway', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background-color: var(--dark-color);
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            max-height: 60px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-text {
+            margin-left: 15px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .logo-text p {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        nav {
+            background-color: var(--dark-color);
+            border-bottom: 1px solid #222;
+            padding: 0;
+        }
+
+        .nav-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-link {
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            padding: 60px 0;
+            min-height: calc(100vh - 250px);
+        }
+
+        .card {
+            background-color: var(--card-color);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+
+        .card-header {
+            padding: 25px;
+            border-bottom: 1px solid #222;
+            background-color: var(--card-color);
+            position: relative;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary-color);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #ff3333; /* Helleres Rot */
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #888888; /* Helleres Grau */
+        }
+
+        .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: #ff3333;
+        }
+
+        .back-link::before {
+            content: '←';
+            margin-right: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .website-item {
+            background-color: var(--card-color);
+            border: 1px solid #222;
+            padding: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .website-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 5px;
+            width: 100%;
+            background-color: var(--primary-color);
+        }
+
+        .website-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #333;
+        }
+
+        .website-item h3 {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: var(--text-color);
+            word-break: break-all;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .website-item p {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            background-color: #111;
+            padding: 15px;
+        }
+
+        .score {
+            text-align: center;
+            flex: 1;
+        }
+
+        .score h4 {
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .good {
+            color: var(--success-color);
+        }
+
+        .average {
+            color: var(--warning-color);
+        }
+
+        .poor {
+            color: var(--danger-color);
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 30px 0;
+            background-color: #111;
+            padding: 20px;
+            border: 1px solid #222;
+        }
+
+        .detail-section {
+            margin-bottom: 40px;
+        }
+
+        .detail-section h3 {
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #222;
+            color: var(--text-color);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            background-color: #111;
+            padding: 20px;
+            border: 1px solid #222;
+        }
+
+        .detail-item h4 {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #aaa;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(232, 24, 24, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #aaa;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #website-list, #website-history, #analysis-details {
+            margin-bottom: 40px;
+        }
+
+        #website-history, #analysis-details {
+            display: none;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: var(--text-color);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-logo {
+            max-height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .footer-nav {
+            margin: 20px 0;
+        }
+
+        .footer-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-social {
+            margin: 20px 0;
+        }
+
+        .footer-social a {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-container {
+                margin-bottom: 15px;
+            }
+
+            .nav-container {
+                justify-content: center;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container header-container">
+        <div class="logo-container">
+            <!-- Platzhalter für dein Logo - ersetze src mit dem Pfad zu deinem Logo -->
+            <img src="logo.png" alt="Saraci Design Logo" class="logo">
+            <div class="logo-text">
+                <h1>SARACI DESIGN</h1>
+                <p>ANALYSE DASHBOARD</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container">
+        <div class="nav-container">
+            <a href="/" class="nav-link">ANALYSE-TOOL</a>
+            <a href="/dashboard" class="nav-link active">DASHBOARD</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container">
+        <!-- Liste aller analysierten Websites -->
+        <section id="website-list">
+            <div class="card">
+                <div class="card-header">
+                    <h2>ANALYSIERTE WEBSITES</h2>
+                </div>
+                <div class="card-body" id="websites-container">
+                    <div class="loader">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historische Daten für eine bestimmte Website -->
+        <section id="website-history">
+            <a href="#" class="back-link" id="back-to-list">ZURÜCK ZUR ÜBERSICHT</a>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="history-title">ANALYSE-VERLAUF</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="history-chart"></canvas>
+                    </div>
+
+                    <h3>ALLE ANALYSEN</h3>
+                    <div id="analyses-container">
+                        <div class="loader">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Details einer bestimmten Analyse -->
+        <section id="analysis-details">
+            <a href="#" class="back-link" id="back-to-history">ZURÜCK ZUM VERLAUF</a>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="details-title">ANALYSEDETAILS</h2>
+                </div>
+                <div class="card-body">
+                    <p id="details-date" style="margin-bottom:20px; color:#aaa;"></p>
+
+                    <div class="score-row" style="margin-bottom: 30px;">
+                        <div class="score">
+                            <h4>SEO</h4>
+                            <div id="details-seo-score" class="score-value">-</div>
+                        </div>
+                        <div class="score">
+                            <h4>PERFORMANCE</h4>
+                            <div id="details-performance-score" class="score-value">-</div>
+                        </div>
+                        <div class="score">
+                            <h4>SICHERHEIT</h4>
+                            <div id="details-security-score" class="score-value">-</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>SEO</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <h4>TITELLÄNGE</h4>
+                                <p id="details-title-length">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>BESCHREIBUNGSLÄNGE</h4>
+                                <p id="details-description-length">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>H1-ANZAHL</h4>
+                                <p id="details-h1-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>ALT-TEXT %</h4>
+                                <p id="details-alt-percentage">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>INTERNE LINKS</h4>
+                                <p id="details-internal-links">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>EXTERNE LINKS</h4>
+                                <p id="details-external-links">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>PERFORMANCE</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <h4>FIRST CONTENTFUL PAINT</h4>
+                                <p id="details-fcp">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>LARGEST CONTENTFUL PAINT</h4>
+                                <p id="details-lcp">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>TIME TO INTERACTIVE</h4>
+                                <p id="details-tti">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>TOTAL BLOCKING TIME</h4>
+                                <p id="details-tbt">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>CUMULATIVE LAYOUT SHIFT</h4>
+                                <p id="details-cls">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>LADEZEIT</h4>
+                                <p id="details-load-time">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>INHALT</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <h4>WÖRTER</h4>
+                                <p id="details-word-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>ABSÄTZE</h4>
+                                <p id="details-paragraph-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>BILDER</h4>
+                                <p id="details-image-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>VIDEOS</h4>
+                                <p id="details-video-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>LISTEN</h4>
+                                <p id="details-list-count">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>TABELLEN</h4>
+                                <p id="details-table-count">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>SICHERHEIT</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <h4>HTTPS</h4>
+                                <p id="details-https">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>SECURITY HEADERS</h4>
+                                <p id="details-security-headers">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <a id="download-pdf" href="#" class="btn" target="_blank">PDF-BERICHT HERUNTERLADEN</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer>
+    <div class="container footer-content">
+        <!-- Platzhalter für dein Logo - ersetze src mit dem Pfad zu deinem Logo -->
+        <img src="logo.png" alt="Saraci Design Logo" class="footer-logo">
+
+        <div class="footer-nav">
+            <a href="/">ANALYSE-TOOL</a>
+            <a href="/dashboard">DASHBOARD</a>
+            <a href="https://saraci-design.de">SARACI DESIGN</a>
+        </div>
+
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+
+        <div class="copyright">
+            &copy; 2025 SARACI DESIGN. ALLE RECHTE VORBEHALTEN.
+        </div>
+    </div>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM-Elemente
+        const websiteListSection = document.getElementById('website-list');
+        const websiteHistorySection = document.getElementById('website-history');
+        const analysisDetailsSection = document.getElementById('analysis-details');
+
+        const websitesContainer = document.getElementById('websites-container');
+        const analysesContainer = document.getElementById('analyses-container');
+
+        const historyTitle = document.getElementById('history-title');
+        const detailsTitle = document.getElementById('details-title');
+        const detailsDate = document.getElementById('details-date');
+        const downloadPdfLink = document.getElementById('download-pdf');
+
+        // Zurück-Links
+        document.getElementById('back-to-list').addEventListener('click', function(e) {
+            e.preventDefault();
+            showWebsiteList();
+        });
+
+        document.getElementById('back-to-history').addEventListener('click', function(e) {
+            e.preventDefault();
+            showWebsiteHistory(currentWebsiteUrl);
+        });
+
+        // Globale Variablen für die aktuelle Auswahl
+        let currentWebsiteUrl = null;
+        let currentAnalysisId = null;
+        let historyChart = null;
+
+        // Beim Laden der Seite alle Websites abrufen
+        fetchWebsites();
+
+        // Alle analysierten Websites abrufen
+        async function fetchWebsites() {
+            try {
+                const response = await fetch('/api/websites');
+                const websites = await response.json();
+
+                displayWebsites(websites);
+            } catch (error) {
+                console.error('Fehler beim Abrufen der Websites:', error);
+                websitesContainer.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Fehler beim Laden der Websites.</p></div>';
+            }
+        }
+
+        // Websites anzeigen
+        function displayWebsites(websites) {
+            if (!websites || websites.length === 0) {
+                websitesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>Noch keine Websites analysiert.</p>
+                        <a href="/" class="btn" style="margin-top:20px;">NEUE ANALYSE STARTEN</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="grid">';
+
+            websites.forEach(website => {
+                const seoScore = website.latestScores.seo || 'N/A';
+                const performanceScore = website.latestScores.performance || 'N/A';
+                const securityScore = website.latestScores.security || 'N/A';
+
+                html += `
+                    <div class="website-item" data-url="${encodeURIComponent(website.url)}">
+                        <h3>${truncateUrl(website.url, 30)}</h3>
+                        <p><strong>Erste Analyse:</strong> ${formatDate(website.firstAnalysis)}</p>
+                        <p><strong>Letzte Analyse:</strong> ${formatDate(website.lastAnalysis)}</p>
+                        <p><strong>Anzahl Analysen:</strong> ${website.analysisCount}</p>
+                        <div class="score-row">
+                            <div class="score">
+                                <h4>SEO</h4>
+                                <div class="score-value ${getScoreClass(seoScore)}">${seoScore}</div>
+                            </div>
+                            <div class="score">
+                                <h4>PERF</h4>
+                                <div class="score-value ${getScoreClass(performanceScore)}">${performanceScore}</div>
+                            </div>
+                            <div class="score">
+                                <h4>SEC</h4>
+                                <div class="score-value ${getScoreClass(securityScore)}">${securityScore}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            websitesContainer.innerHTML = html;
+
+            // Event-Listener für Website-Elemente hinzufügen
+            document.querySelectorAll('.website-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const url = decodeURIComponent(this.dataset.url);
+                    showWebsiteHistory(url);
+                });
+            });
+        }
+
+        // Historische Daten für eine bestimmte Website abrufen
+        async function fetchWebsiteHistory(url) {
+            try {
+                const response = await fetch(`/api/website/${encodeURIComponent(url)}/history`);
+                const history = await response.json();
+
+                return history;
+            } catch (error) {
+                console.error('Fehler beim Abrufen der historischen Daten:', error);
+                throw error;
+            }
+        }
+
+        // Details einer bestimmten Analyse abrufen
+        async function fetchAnalysisDetails(analysisId) {
+            try {
+                const response = await fetch(`/api/analysis/${analysisId}`);
+                const details = await response.json();
+
+                return details;
+            } catch (error) {
+                console.error('Fehler beim Abrufen der Analysedetails:', error);
+                throw error;
+            }
+        }
+
+        // Historische Daten anzeigen
+        async function showWebsiteHistory(url) {
+            currentWebsiteUrl = url;
+            websiteListSection.style.display = 'none';
+            websiteHistorySection.style.display = 'block';
+            analysisDetailsSection.style.display = 'none';
+
+            historyTitle.textContent = `ANALYSE-VERLAUF FÜR ${truncateUrl(url, 40)}`;
+            analysesContainer.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+
+            try {
+                const history = await fetchWebsiteHistory(url);
+
+                if (history.error) {
+                    analysesContainer.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>${history.error}</p></div>`;
+                    return;
+                }
+
+                if (!history.analyses || history.analyses.length === 0) {
+                    analysesContainer.innerHTML = '<div class="empty-state"><i class="fas fa-info-circle"></i><p>Keine Analysen gefunden.</p></div>';
+                    return;
+                }
+
+                // Diagramm erstellen
+                createHistoryChart(history.analyses);
+
+                // Analyse-Liste erstellen
+                let html = '<div class="grid">';
+
+                history.analyses.forEach(analysis => {
+                    const seoScore = analysis.scores.seo || 'N/A';
+                    const performanceScore = analysis.scores.performance || 'N/A';
+                    const securityScore = analysis.scores.security || 'N/A';
+
+                    html += `
+                        <div class="website-item" data-id="${analysis.id}">
+                            <h3>ANALYSE VOM ${formatDate(analysis.date)}</h3>
+                            <div class="score-row">
+                                <div class="score">
+                                    <h4>SEO</h4>
+                                    <div class="score-value ${getScoreClass(seoScore)}">${seoScore}</div>
+                                </div>
+                                <div class="score">
+                                    <h4>PERF</h4>
+                                    <div class="score-value ${getScoreClass(performanceScore)}">${performanceScore}</div>
+                                </div>
+                                <div class="score">
+                                    <h4>SEC</h4>
+                                    <div class="score-value ${getScoreClass(securityScore)}">${securityScore}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                analysesContainer.innerHTML = html;
+
+                // Event-Listener für Analyse-Elemente hinzufügen
+                document.querySelectorAll('#analyses-container .website-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const analysisId = this.dataset.id;
+                        showAnalysisDetails(analysisId);
+                    });
+                });
+
+            } catch (error) {
+                analysesContainer.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Fehler beim Laden der historischen Daten.</p></div>';
+            }
+        }
+
+        // Diagramm für historische Daten erstellen
+        function createHistoryChart(analyses) {
+            // Chart.js Optionen anpassen
+            Chart.defaults.color = '#aaa';
+            Chart.defaults.borderColor = '#222';
+
+            // Bestehenden Chart zerstören, falls vorhanden
+            if (historyChart) {
+                historyChart.destroy();
+            }
+
+            // Daten vorbereiten
+            const dates = analyses.map(a => formatDate(a.date));
+            const seoScores = analyses.map(a => a.scores.seo || null);
+            const performanceScores = analyses.map(a => a.scores.performance || null);
+            const securityScores = analyses.map(a => a.scores.security || null);
+
+            // Chart erstellen
+            const ctx = document.getElementById('history-chart').getContext('2d');
+            historyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'SEO',
+                            data: seoScores,
+                            borderColor: '#00d26a', // Success-Grün
+                                backgroundColor: 'rgba(0, 210, 106, 0.1)',
+                                tension: 0.3,
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Performance',
+                                data: performanceScores,
+                                borderColor: '#ffbb00', // Warning-Gelb
+                                backgroundColor: 'rgba(255, 187, 0, 0.1)',
+                                tension: 0.3,
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Sicherheit',
+                                data: securityScores,
+                                borderColor: '#e81818', // Primary-Rot
+                                backgroundColor: 'rgba(232, 24, 24, 0.1)',
+                                tension: 0.3,
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    color: '#222'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Score',
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#aaa'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: '#222'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Datum',
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#aaa'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                bodyFont: {
+                                    size: 14
+                                },
+                                padding: 12,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#fff',
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Analysedetails anzeigen
+            async function showAnalysisDetails(analysisId) {
+                currentAnalysisId = analysisId;
+                websiteListSection.style.display = 'none';
+                websiteHistorySection.style.display = 'none';
+                analysisDetailsSection.style.display = 'block';
+
+                try {
+                    const details = await fetchAnalysisDetails(analysisId);
+
+                    if (details.error) {
+                        detailsTitle.textContent = 'FEHLER';
+                        detailsDate.textContent = details.error;
+                        return;
+                    }
+
+                    // Titel und Datum
+                    detailsTitle.textContent = `ANALYSEDETAILS FÜR ${truncateUrl(details.url, 40)}`;
+                    detailsDate.textContent = `ANALYSE VOM ${formatDate(details.date)}`;
+
+                    // PDF-Download-Link
+                    if (details.pdfPath) {
+                        downloadPdfLink.href = `/download?path=${encodeURIComponent(details.pdfPath)}`;
+                        downloadPdfLink.style.display = 'inline-block';
+                    } else {
+                        downloadPdfLink.style.display = 'none';
+                    }
+
+                    // Scores
+                    const seoScore = details.seo?.score || 'N/A';
+                    const performanceScore = details.performance?.lighthouseScore || 'N/A';
+                    const securityScore = details.security?.securityHeadersScore || 'N/A';
+
+                    document.getElementById('details-seo-score').textContent = seoScore;
+                    document.getElementById('details-seo-score').className = `score-value ${getScoreClass(seoScore)}`;
+
+                    document.getElementById('details-performance-score').textContent = performanceScore;
+                    document.getElementById('details-performance-score').className = `score-value ${getScoreClass(performanceScore)}`;
+
+                    document.getElementById('details-security-score').textContent = securityScore;
+                    document.getElementById('details-security-score').className = `score-value ${getScoreClass(securityScore)}`;
+
+                    // SEO-Details
+                    document.getElementById('details-title-length').textContent = details.seo?.titleLength || '-';
+                    document.getElementById('details-description-length').textContent = details.seo?.descriptionLength || '-';
+                    document.getElementById('details-h1-count').textContent = details.seo?.h1Count || '-';
+                    document.getElementById('details-alt-percentage').textContent = details.seo?.altImagePercentage ? `${details.seo.altImagePercentage}%` : '-';
+                    document.getElementById('details-internal-links').textContent = details.seo?.internalLinks || '-';
+                    document.getElementById('details-external-links').textContent = details.seo?.externalLinks || '-';
+
+                    // Performance-Details
+                    document.getElementById('details-fcp').textContent = details.performance?.metrics?.FCP || '-';
+                    document.getElementById('details-lcp').textContent = details.performance?.metrics?.LCP || '-';
+                    document.getElementById('details-tti').textContent = details.performance?.metrics?.TTI || '-';
+                    document.getElementById('details-tbt').textContent = details.performance?.metrics?.TBT || '-';
+                    document.getElementById('details-cls').textContent = details.performance?.metrics?.CLS || '-';
+                    document.getElementById('details-load-time').textContent = details.performance?.loadTime || '-';
+
+                    // Inhalts-Details
+                    document.getElementById('details-word-count').textContent = details.content?.wordCount || '-';
+                    document.getElementById('details-paragraph-count').textContent = details.content?.paragraphCount || '-';
+                    document.getElementById('details-image-count').textContent = details.content?.imageCount || '-';
+                    document.getElementById('details-video-count').textContent = details.content?.videoCount || '-';
+                    document.getElementById('details-list-count').textContent = details.content?.listCount || '-';
+                    document.getElementById('details-table-count').textContent = details.content?.tableCount || '-';
+
+                    // Sicherheits-Details
+                    document.getElementById('details-https').textContent = details.security?.httpsEnabled ? 'JA' : 'NEIN';
+                    document.getElementById('details-https').style.color = details.security?.httpsEnabled ? '#00d26a' : '#ff3333';
+
+                    document.getElementById('details-security-headers').textContent = details.security?.securityHeadersScore ? `${details.security.securityHeadersScore}%` : '-';
+
+                } catch (error) {
+                    console.error('Fehler beim Anzeigen der Analysedetails:', error);
+                    detailsTitle.textContent = 'FEHLER';
+                    detailsDate.textContent = 'Fehler beim Laden der Analysedetails.';
+                }
+            }
+
+            // Website-Liste anzeigen
+            function showWebsiteList() {
+                currentWebsiteUrl = null;
+                currentAnalysisId = null;
+
+                websiteListSection.style.display = 'block';
+                websiteHistorySection.style.display = 'none';
+                analysisDetailsSection.style.display = 'none';
+
+                // Chart zerstören, falls vorhanden
+                if (historyChart) {
+                    historyChart.destroy();
+                    historyChart = null;
+                }
+            }
+
+            // Hilfsfunktionen
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function truncateUrl(url, maxLength) {
+                if (!url) return '';
+
+                // URL-Protokoll entfernen
+                let cleanUrl = url.replace(/^https?:\/\//, '');
+
+                // Wenn die URL immer noch zu lang ist, kürzen
+                if (cleanUrl.length > maxLength) {
+                    return cleanUrl.substring(0, maxLength - 3) + '...';
+                }
+
+                return cleanUrl;
+            }
+
+            function getScoreClass(score) {
+                if (score === 'N/A' || typeof score !== 'number') return '';
+                if (score >= 70) return 'good';
+                if (score >= 50) return 'average';
+                return 'poor';
+            }
+        });
+</script>
+</body>
+</html>
