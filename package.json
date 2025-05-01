@@ -17,6 +17,7 @@
     "express": "^5.1.0",
     "html-validator": "^6.0.1",
     "lighthouse": "^9.6.8",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.10.1",
     "pdfkit": "^0.17.0",
     "puppeteer": "^24.7.2",

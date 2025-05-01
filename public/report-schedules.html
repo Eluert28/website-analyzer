@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berichts-Zeitpläne - Website Analyzer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #000;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: bold;
+        }
+        .nav-link {
+            color: #fff;
+        }
+        .nav-link.active {
+            color: #f00;
+            border-bottom: 2px solid #f00;
+        }
+        .card {
+            background-color: #111;
+            border: none;
+            border-left: 3px solid #f00;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #111;
+            border-bottom: 1px solid #333;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .card-body {
+            background-color: #111;
+            color: #fff;
+        }
+        .table {
+            color: #fff;
+        }
+        .table thead th {
+            border-bottom: 1px solid #333;
+        }
+        .table td, .table th {
+            border-top: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #f00;
+            border-color: #f00;
+        }
+        .btn-primary:hover {
+            background-color: #d00;
+            border-color: #d00;
+        }
+        .btn-outline-primary {
+            color: #f00;
+            border-color: #f00;
+        }
+        .btn-outline-primary:hover {
+            background-color: #f00;
+            color: #fff;
+        }
+        .form-control, .form-select {
+            background-color: #222;
+            border: 1px solid #333;
+            color: #fff;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #222;
+            border-color: #f00;
+            color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.25);
+        }
+        .alert {
+            background-color: #222;
+            border: 1px solid #333;
+        }
+        .alert-success {
+            color: #0f0;
+        }
+        .alert-danger {
+            color: #f00;
+        }
+        .modal-content {
+            background-color: #111;
+            color: #fff;
+        }
+        .modal-header, .modal-footer {
+            border-color: #333;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/logo.png" alt="Logo" height="30" class="d-inline-block align-top">
+            SARACI DESIGN
+        </a>
+        <div class="navbar-text text-danger">WEBSITE ANALYSE TOOL</div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">ANALYSE-TOOL</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">DASHBOARD</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/report-schedules">BERICHTS-ZEITPLÄNE</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            BERICHTS-ZEITPLÄNE
+        </div>
+        <div class="card-body">
+            <div id="alerts"></div>
+
+            <div class="mb-4">
+                <h5>NEUEN ZEITPLAN ERSTELLEN</h5>
+                <form id="scheduleForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="websiteId" class="form-label">WEBSITE</label>
+                                <select class="form-select" id="websiteId" required>
+                                    <option value="">-- Website auswählen --</option>
+                                    <!-- Websites werden per JavaScript geladen -->
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="interval" class="form-label">INTERVALL</label>
+                                <select class="form-select" id="interval" required>
+                                    <option value="hourly">Stündlich</option>
+                                    <option value="daily">Täglich</option>
+                                    <option value="weekly">Wöchentlich</option>
+                                    <option value="biweekly">Zweimal monatlich</option>
+                                    <option value="monthly">Monatlich</option>
+                                    <option value="custom">Benutzerdefiniert (Cron-Syntax)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="customCronGroup" style="display: none;">
+                                <label for="customCron" class="form-label">BENUTZERDEFINIERTER CRON-AUSDRUCK</label>
+                                <input type="text" class="form-control" id="customCron"
+                                       placeholder="z.B. 0 8 * * *" pattern="^(\S+\s+){4}\S+$">
+                                <div class="form-text text-muted">
+                                    Format: Minute Stunde Tag Monat Wochentag
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="reportType" class="form-label">BERICHTSTYP</label>
+                                <select class="form-select" id="reportType" required>
+                                    <option value="full">Vollständiger Bericht</option>
+                                    <option value="seo">SEO-Bericht</option>
+                                    <option value="performance">Performance-Bericht</option>
+                                    <option value="security">Sicherheits-Bericht</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">EMPFÄNGER</label>
+                                <div id="recipientsContainer">
+                                    <div class="input-group mb-2">
+                                        <input type="email" class="form-control recipient-input" placeholder="E-Mail-Adresse" required>
+                                        <button class="btn btn-outline-danger remove-recipient" type="button">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="addRecipientBtn">
+                                    <i class="bi bi-plus"></i> Weiteren Empfänger hinzufügen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-danger">ZEITPLAN ERSTELLEN</button>
+                    </div>
+                </form>
+            </div>
+
+            <h5>VORHANDENE ZEITPLÄNE</h5>
+            <div class="table-responsive">
+                <table class="table table-dark" id="schedulesTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>WEBSITE</th>
+                        <th>BERICHTSTYP</th>
+                        <th>INTERVALL</th>
+                        <th>STATUS</th>
+                        <th>AKTIONEN</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Hier werden die Zeitpläne per JavaScript eingefügt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Zeitplan bearbeiten -->
+<div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editScheduleModalLabel">ZEITPLAN BEARBEITEN</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editScheduleForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editWebsiteId" class="form-label">WEBSITE</label>
+                                <select class="form-select" id="editWebsiteId" disabled>
+                                    <!-- Websites werden per JavaScript geladen -->
+                                </select>
+                                <div class="form-text text-muted">
+                                    Die Website kann nicht geändert werden.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editInterval" class="form-label">INTERVALL</label>
+                                <select class="form-select" id="editInterval" required>
+                                    <option value="hourly">Stündlich</option>
+                                    <option value="daily">Täglich</option>
+                                    <option value="weekly">Wöchentlich</option>
+                                    <option value="biweekly">Zweimal monatlich</option>
+                                    <option value="monthly">Monatlich</option>
+                                    <option value="custom">Benutzerdefiniert (Cron-Syntax)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="editCustomCronGroup" style="display: none;">
+                                <label for="editCustomCron" class="form-label">BENUTZERDEFINIERTER CRON-AUSDRUCK</label>
+                                <input type="text" class="form-control" id="editCustomCron"
+                                       placeholder="z.B. 0 8 * * *" pattern="^(\S+\s+){4}\S+$">
+                                <div class="form-text text-muted">
+                                    Format: Minute Stunde Tag Monat Wochentag
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editReportType" class="form-label">BERICHTSTYP</label>
+                                <select class="form-select" id="editReportType" required>
+                                    <option value="full">Vollständiger Bericht</option>
+                                    <option value="seo">SEO-Bericht</option>
+                                    <option value="performance">Performance-Bericht</option>
+                                    <option value="security">Sicherheits-Bericht</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="editIsActive" checked>
+                                    <label class="form-check-label" for="editIsActive">ZEITPLAN AKTIV</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">EMPFÄNGER</label>
+                                <div id="editRecipientsContainer">
+                                    <!-- Hier werden die Empfänger per JavaScript eingefügt -->
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="editAddRecipientBtn">
+                                    <i class="bi bi-plus"></i> Weiteren Empfänger hinzufügen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ABBRECHEN</button>
+                <button type="button" class="btn btn-danger" id="saveEditBtn">SPEICHERN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Ausführungsverlauf -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historyModalLabel">AUSFÜHRUNGSVERLAUF</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DATUM & UHRZEIT</th>
+                            <th>STATUS</th>
+                            <th>FEHLERMELDUNG</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Hier wird der Verlauf per JavaScript eingefügt -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">SCHLIESSEN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS mit Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JavaScript -->
+<script src="/js/report-schedules.js"></script>
+
+<script>
+    // Websites vom Server laden und in die Auswahlliste einfügen
+    async function loadWebsites() {
+        try {
+            const response = await fetch('/api/websites');
+            const websites = await response.json();
+
+            const websiteSelect = document.getElementById('websiteId');
+            const editWebsiteSelect = document.getElementById('editWebsiteId');
+
+            // Optionen löschen, außer der ersten
+            while (websiteSelect.options.length > 1) {
+                websiteSelect.remove(1);
+            }
+
+            // Neue Optionen hinzufügen
+            websites.forEach(website => {
+                const option = new Option(website.url, website.id);
+                websiteSelect.add(option);
+
+                const editOption = new Option(website.url, website.id);
+                editWebsiteSelect.add(editOption);
+            });
+        } catch (error) {
+            console.error('Fehler beim Laden der Websites:', error);
+            // Alert anzeigen
+            const alertsContainer = document.getElementById('alerts');
+            alertsContainer.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show">
+                    Fehler beim Laden der Websites: ${error.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+                </div>
+            `;
+        }
+    }
+
+    // Beim Laden der Seite die Websites abrufen
+    document.addEventListener('DOMContentLoaded', () => {
+        loadWebsites();
+
+        // Event-Listener für Intervall-Änderung
+        document.getElementById('interval').addEventListener('change', function() {
+            document.getElementById('customCronGroup').style.display =
+                this.value === 'custom' ? 'block' : 'none';
+        });
+
+        document.getElementById('editInterval').addEventListener('change', function() {
+            document.getElementById('editCustomCronGroup').style.display =
+                this.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Event-Listener für "Empfänger hinzufügen"-Buttons
+        document.getElementById('addRecipientBtn').addEventListener('click', () => {
+            addRecipientField('recipientsContainer');
+        });
+
+        document.getElementById('editAddRecipientBtn').addEventListener('click', () => {
+            addRecipientField('editRecipientsContainer');
+        });
+
+        // Funktion zum Hinzufügen eines Empfänger-Feldes
+        function addRecipientField(containerId, value = '') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group mb-2';
+            inputGroup.innerHTML = `
+                <input type="email" class="form-control recipient-input" value="${value}" placeholder="E-Mail-Adresse" required>
+                <button type="button" class="btn btn-outline-danger remove-recipient">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+
+            // Event-Listener für Löschen-Button
+            inputGroup.querySelector('.remove-recipient').addEventListener('click', function() {
+                // Prüfen, ob es das letzte Eingabefeld ist
+                const allInputs = container.querySelectorAll('.input-group');
+                if (allInputs.length > 1) {
+                    this.parentElement.remove();
+                } else {
+                    // Letztes Element nicht entfernen, stattdessen leeren
+                    inputGroup.querySelector('.recipient-input').value = '';
+                }
+            });
+
+            container.appendChild(inputGroup);
+        }
+
+        // Event-Listener für bestehende Löschen-Buttons
+        document.querySelectorAll('.remove-recipient').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('[id$="RecipientsContainer"]');
+                if (container.querySelectorAll('.input-group').length > 1) {
+                    this.parentElement.remove();
+                } else {
+                    // Letztes Element nicht entfernen, stattdessen leeren
+                    this.parentElement.querySelector('.recipient-input').value = '';
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

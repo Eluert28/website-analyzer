@@ -38,6 +38,11 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// Report-Schedules Route
+app.get('/report-schedules', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'report-schedules.html'));
+});
+
 // API-Endpunkt zum Analysieren einer Website
 app.post('/analyze', async (req, res) => {
   try {
@@ -1388,7 +1393,6 @@ async function generatePDF(report) {
 
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
           }
-
           // Datenbank initialisieren und Server starten
           (async () => {
             try {
@@ -1396,11 +1400,30 @@ async function generatePDF(report) {
               await initDatabase();
               console.log('Datenbank erfolgreich initialisiert');
 
+              // Routen für Reports einfügen
+              const reportsRoutes = require('./routes/reports');
+              app.use('/api/reports', reportsRoutes);
+              console.log('Reports-Routen erfolgreich registriert');
+
               // Server starten
-              app.listen(port, () => {
+              const server = app.listen(port, () => {
                 console.log(`Server läuft auf Port ${port}`);
                 console.log(`Website-Analyse-Tool: http://localhost:${port}`);
                 console.log(`Dashboard: http://localhost:${port}/dashboard`);
+
+                // Initialisiere den Report-Scheduler
+                try {
+                  const reportScheduler = require('./services/reportScheduler');
+                  reportScheduler.initialize()
+                    .then(() => {
+                      console.log('Report-Scheduler erfolgreich initialisiert');
+                    })
+                    .catch(error => {
+                      console.error('Fehler beim Initialisieren des Report-Schedulers:', error);
+                    });
+                } catch (error) {
+                  console.error('Fehler beim Laden des Report-Schedulers:', error);
+                }
               });
             } catch (error) {
               console.error('Fehler beim Starten des Servers:', error);

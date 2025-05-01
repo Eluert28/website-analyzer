@@ -1,0 +1,272 @@
+<%- include('partials/header') %>
+
+<div class="container mt-4">
+  <h1>Berichts-Zeitpläne</h1>
+
+  <div id="alerts"></div>
+
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Neuen Zeitplan erstellen
+        </div>
+        <div class="card-body">
+          <form id="scheduleForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="websiteId" class="form-label">Website</label>
+                  <select class="form-select" id="websiteId" required>
+                    <option value="">-- Website auswählen --</option>
+                    <% websites.forEach(function(website) { %>
+                    <option value="<%= website.id %>"><%= website.url %></option>
+                    <% }); %>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="interval" class="form-label">Intervall</label>
+                  <select class="form-select" id="interval" required>
+                    <option value="hourly">Stündlich</option>
+                    <option value="daily">Täglich</option>
+                    <option value="weekly">Wöchentlich</option>
+                    <option value="biweekly">Zweimal monatlich</option>
+                    <option value="monthly">Monatlich</option>
+                    <option value="custom">Benutzerdefiniert (Cron-Syntax)</option>
+                  </select>
+                </div>
+
+                <div class="mb-3" id="customCronGroup" style="display: none;">
+                  <label for="customCron" class="form-label">Benutzerdefinierter Cron-Ausdruck</label>
+                  <input type="text" class="form-control" id="customCron"
+                         placeholder="z.B. 0 8 * * *" pattern="^(\S+\s+){4}\S+$">
+                  <div class="form-text text-muted">
+                    Format: Minute Stunde Tag Monat Wochentag
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="reportType" class="form-label">Berichtstyp</label>
+                  <select class="form-select" id="reportType" required>
+                    <option value="full">Vollständiger Bericht</option>
+                    <option value="seo">SEO-Bericht</option>
+                    <option value="performance">Performance-Bericht</option>
+                    <option value="security">Sicherheits-Bericht</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                                  <label class="form-label">Empfänger</label>
+                                  <div id="recipientsContainer">
+                                    <div class="input-group mb-2">
+                                      <input type="email" class="form-control recipient-input" placeholder="E-Mail-Adresse" required>
+                                      <button class="btn btn-outline-danger remove-recipient" type="button">
+                                        <i class="bi bi-trash"></i>
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <button type="button" class="btn btn-outline-primary btn-sm" id="addRecipientBtn">
+                                    <i class="bi bi-plus"></i> Weiteren Empfänger hinzufügen
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="text-end">
+                              <button type="submit" class="btn btn-primary">Zeitplan erstellen</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header">
+                      Berichts-Zeitpläne
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="schedulesTable">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Website</th>
+                              <th>Berichtstyp</th>
+                              <th>Intervall</th>
+                              <th>Status</th>
+                              <th>Aktionen</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- Hier werden die Zeitpläne per JavaScript eingefügt -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal: Zeitplan bearbeiten -->
+                <div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editScheduleModalLabel">Zeitplan bearbeiten</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="editScheduleForm">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <label for="editWebsiteId" class="form-label">Website</label>
+                                <select class="form-select" id="editWebsiteId" disabled>
+                                  <% websites.forEach(function(website) { %>
+                                  <option value="<%= website.id %>"><%= website.url %></option>
+                                  <% }); %>
+                                </select>
+                                <div class="form-text text-muted">
+                                  Die Website kann nicht geändert werden.
+                                </div>
+                              </div>
+
+                              <div class="mb-3">
+                                <label for="editInterval" class="form-label">Intervall</label>
+                                <select class="form-select" id="editInterval" required>
+                                  <option value="hourly">Stündlich</option>
+                                  <option value="daily">Täglich</option>
+                                  <option value="weekly">Wöchentlich</option>
+                                  <option value="biweekly">Zweimal monatlich</option>
+                                  <option value="monthly">Monatlich</option>
+                                  <option value="custom">Benutzerdefiniert (Cron-Syntax)</option>
+                                </select>
+                              </div>
+
+                              <div class="mb-3" id="editCustomCronGroup" style="display: none;">
+                                <label for="editCustomCron" class="form-label">Benutzerdefinierter Cron-Ausdruck</label>
+                                <input type="text" class="form-control" id="editCustomCron"
+                                       placeholder="z.B. 0 8 * * *" pattern="^(\S+\s+){4}\S+$">
+                                <div class="form-text text-muted">
+                                  Format: Minute Stunde Tag Monat Wochentag
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <label for="editReportType" class="form-label">Berichtstyp</label>
+                                <select class="form-select" id="editReportType" required>
+                                  <option value="full">Vollständiger Bericht</option>
+                                  <option value="seo">SEO-Bericht</option>
+                                  <option value="performance">Performance-Bericht</option>
+                                  <option value="security">Sicherheits-Bericht</option>
+                                </select>
+                              </div>
+
+                              <div class="mb-3">
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" id="editIsActive" checked>
+                                  <label class="form-check-label" for="editIsActive">Zeitplan aktiv</label>
+                                </div>
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label">Empfänger</label>
+                                <div id="editRecipientsContainer">
+                                  <!-- Hier werden die Empfänger per JavaScript eingefügt -->
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="button" class="btn btn-primary" id="saveEditBtn">Speichern</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal: Ausführungsverlauf -->
+                <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="historyModalLabel">Ausführungsverlauf</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="table-responsive">
+                          <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Datum & Uhrzeit</th>
+                                <th>Status</th>
+                                <th>Fehlermeldung</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <!-- Hier wird der Verlauf per JavaScript eingefügt -->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <script src="/js/report-schedules.js"></script>
+
+                <script>
+                  // Initialisierung des Intervall-Selectors
+                  document.getElementById('interval').addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                      document.getElementById('customCronGroup').style.display = 'block';
+                    } else {
+                      document.getElementById('customCronGroup').style.display = 'none';
+                    }
+                  });
+
+                  // Hinzufügen und Entfernen von Empfängern
+                  document.getElementById('addRecipientBtn').addEventListener('click', function() {
+                    const container = document.getElementById('recipientsContainer');
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'input-group mb-2';
+                    inputGroup.innerHTML = `
+                      <input type="email" class="form-control recipient-input" placeholder="E-Mail-Adresse" required>
+                      <button class="btn btn-outline-danger remove-recipient" type="button">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    `;
+
+                    // Event-Listener für Löschen-Button
+                    inputGroup.querySelector('.remove-recipient').addEventListener('click', function() {
+                      this.parentElement.remove();
+                    });
+
+                    container.appendChild(inputGroup);
+                  });
+
+                  // Event-Listener für bestehende Löschen-Buttons
+                  document.querySelectorAll('.remove-recipient').forEach(button => {
+                    button.addEventListener('click', function() {
+                      if (document.querySelectorAll('.recipient-input').length > 1) {
+                        this.parentElement.remove();
+                      } else {
+                        // Letztes Element nicht entfernen, stattdessen leeren
+                        this.parentElement.querySelector('.recipient-input').value = '';
+                      }
+                    });
+                  });
+                </script>
+
+                <%- include('partials/footer') %>
