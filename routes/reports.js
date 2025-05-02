@@ -221,3 +221,39 @@ router.post('/schedules/:id/execute', async (req, res) => {
 });
 
 module.exports = router;
+
+// KI-Empfehlungen für eine Analyse
+router.get('/analysis/:id/ai-recommendations', async (req, res) => {
+  try {
+    const analysisId = req.params.id;
+
+    // Analysedaten abrufen
+    const analysisDetails = await getAnalysisDetails(analysisId);
+
+    if (analysisDetails.error) {
+      return res.status(404).json({
+        success: false,
+        error: analysisDetails.error
+      });
+    }
+
+    // KI-Empfehlungen generieren
+    const aiRecommendations = require('../services/aiRecommendations');
+    const recommendations = await aiRecommendations.generateRecommendations(analysisDetails);
+
+    res.json({
+      success: true,
+      analysis: {
+        id: analysisId,
+        url: analysisDetails.url
+      },
+      recommendations: recommendations
+    });
+  } catch (error) {
+    console.error(`Fehler bei KI-Empfehlungen für Analyse ${req.params.id}:`, error);
+    res.status(500).json({
+      success: false,
+      error: 'Fehler bei der Generierung von KI-Empfehlungen'
+    });
+  }
+});

@@ -1,9 +1,4 @@
-// Verbessertes Website-Analyse-Tool mit allen angeforderten Funktionen
-// Speichere diese Datei als "app.js"
-
-// Benötigte Pakete:
-// npm install express axios cheerio cors puppeteer lighthouse pdfkit nodemailer chrome-launcher html-validator sqlite3
-
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
